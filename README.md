@@ -1,115 +1,149 @@
-# 小王刷题
+# XiaoWang Practice
 
-小王刷题是一个本地优先的刷题工具，前端使用 React + Vite，后端使用 FastAPI + SQLite。它适合用来搭建个人或小团队的题库练习系统，支持账号、随机刷题、顺序刷题、错题本、收藏题、学习中心和管理平台。
+XiaoWang Practice is a local-first question practice application built with React, Vite, FastAPI, and SQLite. It is designed for personal study, small-team question banks, and lightweight internal training workflows where the application code can be shared publicly while the real question bank remains private.
 
-> 公开仓库只包含刷题工具代码和少量示例题，不包含任何私有题库。正式题库请放在本地 `data/question_bank.json`，该文件已被 `.gitignore` 排除，不会被提交。
+This repository contains the practice tool only. It does not include the private 2,000-question bank used in the screenshots. The public repository ships with a tiny demo bank at `data/question_bank.sample.json` so the application can be cloned, installed, and run immediately.
 
-## 目录
+## Table Of Contents
 
-- [截图](#截图)
-- [功能概览](#功能概览)
-- [技术栈](#技术栈)
-- [快速启动](#快速启动)
-- [默认账号](#默认账号)
-- [题库数据](#题库数据)
-- [项目结构](#项目结构)
-- [常用命令](#常用命令)
-- [部署与运行](#部署与运行)
-- [备份与恢复](#备份与恢复)
-- [开发验证](#开发验证)
-- [排错指南](#排错指南)
-- [开源边界](#开源边界)
+- [Screenshots](#screenshots)
+- [What This App Does](#what-this-app-does)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Default Accounts](#default-accounts)
+- [Question Bank Data](#question-bank-data)
+- [Project Structure](#project-structure)
+- [Common Commands](#common-commands)
+- [Local Production Run](#local-production-run)
+- [Backup And Restore](#backup-and-restore)
+- [Development Checks](#development-checks)
+- [Troubleshooting](#troubleshooting)
+- [Open-Source Boundary](#open-source-boundary)
 - [License](#license)
 
-## 截图
+## Screenshots
 
-### 登录
+The screenshots below are captured from a production-scale local dataset to show the full interface, real practice flow, and administration screens. The repository still does not include the private question-bank files themselves.
 
-![登录页](docs/assets/screenshot-login.png)
+### Login
 
-### 随机刷题
+![Login screen](docs/assets/screenshot-login.png)
 
-![随机刷题](docs/assets/screenshot-random-practice.png)
+### Random Practice
 
-### 学习中心
+![Random practice](docs/assets/screenshot-random-practice.png)
 
-![学习中心](docs/assets/screenshot-learning-center.png)
+### Sequential Practice
 
-### 管理平台
+![Sequential practice](docs/assets/screenshot-sequential-practice.png)
 
-![管理平台](docs/assets/screenshot-admin-panel.png)
+### Learning Center
 
-## 功能概览
+![Learning center](docs/assets/screenshot-learning-center.png)
 
-### 账号系统
+### Admin Panel
 
-- 支持注册、登录、退出登录。
-- 支持普通用户和管理员角色。
-- 使用本地 SQLite 保存用户、会话和学习记录。
-- 默认提供 `admin` 和 `demo` 两个账号，便于首次体验。
+![Admin panel](docs/assets/screenshot-admin-panel.png)
 
-### 随机刷题
+## What This App Does
 
-- 支持按单选、多选、判断题数量抽题。
-- 默认示例练习为 `2/1/1`，即 2 道单选、1 道多选、1 道判断。
-- 支持难度筛选。
-- 单选题和判断题首次选择后自动进入下一题。
-- 多选题由用户手动进入下一题。
-- 支持返回上一题修改答案。
-- 交卷后统一展示分数、答案、解析和来源。
-- 未交卷时会保留随机练习草稿。
+### Account System
 
-### 顺序刷题
+- User registration, login, logout, and token-based sessions.
+- Two roles: regular user and administrator.
+- Default local accounts for first-time evaluation.
+- User state stored in local SQLite.
 
-- 按题库顺序逐题练习。
-- 支持上一题、下一题。
-- 支持跳转到指定题号。
-- 已刷题目会记录进度。
-- 再次进入时可继续未刷题目。
-- 支持重置顺序刷题记录。
+### Random Practice
 
-### 学习中心
+- Draws questions by type: single-choice, multiple-choice, and true/false.
+- Supports difficulty filtering.
+- Supports administrator-published practice sets.
+- Keeps answers in a form-like draft before final submission.
+- Allows users to move backward and change previous answers before submitting the full paper.
+- Single-choice and true/false questions can auto-advance after first selection.
+- Multiple-choice questions require manual navigation to avoid accidental submission.
+- Final submission shows score, answers, explanations, and per-type summary.
 
-- 总览：展示学习状态和复习入口。
-- 错题本：集中查看最近答错且未掌握的题目。
-- 我的收藏：集中查看主动收藏的重点题。
-- 薄弱点：按章节、知识点和题型展示薄弱分布。
-- 学习记录：查看最近作答情况。
-- 支持重置学习中心数据。
+### Sequential Practice
 
-### 管理平台
+- Walks through the question bank in order.
+- Supports previous/next navigation.
+- Supports jumping to a specific question number.
+- Tracks practiced questions.
+- Can continue from the next unpracticed question.
+- Supports resetting sequential practice progress.
 
-管理员登录后可进入管理平台：
+### Learning Center
 
-- 总览：查看题库和用户数据概况。
-- 题库管理：按题型、科目、难度、状态、来源和关键词筛选题目。
-- 题目维护：新增、编辑、停用题目。
-- 练习配置：创建并发布专项练习。
-- 用户管理：查看用户、切换角色、启停账号、重置密码。
-- 操作审计：记录关键管理操作。
+- Overview of current study progress.
+- Wrong-question review.
+- Favorites list.
+- Weak-area review.
+- Recent answer history.
+- Reset button for learning data.
+- Secondary navigation so wrong questions, favorites, weak areas, and history do not crowd a single long page.
 
-## 技术栈
+### Admin Panel
 
-| 层 | 技术 |
+Administrators can manage the local question-bank layer and users:
+
+- Dashboard overview.
+- Question filtering by type, subject, difficulty, status, origin, knowledge point, and keyword.
+- Question creation, editing, disabling, and export.
+- Practice set creation and publishing.
+- User management: role switching, enable/disable, password reset.
+- Audit logs for key administrative operations.
+
+## Architecture
+
+The application is intentionally simple:
+
+```text
+Browser
+  |
+  | HTTP / JSON
+  v
+FastAPI backend
+  |
+  | reads base question JSON
+  | writes runtime state
+  v
+SQLite + local data files
+```
+
+Important design points:
+
+- The base question bank is read from JSON at backend startup.
+- Runtime state is stored in SQLite.
+- User answers, favorites, wrong-question status, sessions, users, custom questions, practice sets, and audit logs are stored locally.
+- The open-source repository excludes private question banks and runtime state.
+- The backend can serve the built frontend in local production mode.
+
+## Tech Stack
+
+| Layer | Technology |
 | --- | --- |
-| 前端 | React 19, Vite 6, lucide-react |
-| 后端 | FastAPI, Pydantic, Uvicorn |
-| 数据库 | SQLite |
-| 包管理 | npm, pip |
-| 运行方式 | 本地前端构建 + FastAPI 静态托管 |
+| Frontend | React 19, Vite 6, lucide-react |
+| Backend | FastAPI, Pydantic, Uvicorn |
+| Runtime database | SQLite |
+| Question-bank format | JSON |
+| Package managers | npm, pip |
+| Local production mode | Vite build served by FastAPI |
 
-## 快速启动
+## Quick Start
 
-以下命令以 Windows PowerShell 为例。
+The commands below use Windows PowerShell.
 
-### 1. 克隆仓库
+### 1. Clone The Repository
 
 ```powershell
 git clone https://github.com/versev999/XiaoWang-Tiku.git
 cd XiaoWang-Tiku
 ```
 
-### 2. 创建 Python 虚拟环境
+### 2. Create A Python Virtual Environment
 
 ```powershell
 python -m venv .venv
@@ -117,7 +151,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.txt
 ```
 
-### 3. 安装前端依赖
+### 3. Install Frontend Dependencies
 
 ```powershell
 cd .\frontend
@@ -125,7 +159,7 @@ npm install
 cd ..
 ```
 
-### 4. 构建前端
+### 4. Build The Frontend
 
 ```powershell
 cd .\frontend
@@ -133,124 +167,124 @@ npm run build
 cd ..
 ```
 
-### 5. 启动本地应用
+### 5. Start The Local App
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\start_local.ps1
 ```
 
-浏览器打开：
+Open:
 
 ```text
 http://127.0.0.1:8001/
 ```
 
-## 默认账号
+## Default Accounts
 
-| 角色 | 用户名 | 密码 |
+| Role | Username | Password |
 | --- | --- | --- |
-| 管理员 | `admin` | `admin123456` |
-| 演示用户 | `demo` | `demo123456` |
+| Administrator | `admin` | `admin123456` |
+| Demo user | `demo` | `demo123456` |
 
-正式使用前，请登录管理平台修改默认密码。
+Change these passwords before real use.
 
-## 题库数据
+## Question Bank Data
 
-### 公开示例题库
+### Public Demo Bank
 
-仓库内置一个公开示例题库：
+The repository includes a small public demo bank:
 
 ```text
 data/question_bank.sample.json
 ```
 
-它只用于演示数据结构和刷题流程，不对应任何正式考试内容。
+It is only for verifying installation and UI behavior. It is not an exam bank.
 
-如果 `data/question_bank.json` 不存在，后端会自动读取 `data/question_bank.sample.json`。
+If `data/question_bank.json` does not exist, the backend automatically falls back to `data/question_bank.sample.json`.
 
-### 使用自己的私有题库
+### Private Bank
 
-把你的私有题库放到：
+To use your own private bank, place it here:
 
 ```text
 data/question_bank.json
 ```
 
-然后重新启动后端服务即可。
+Then restart the backend.
 
-该文件已被 `.gitignore` 排除，不会被提交到公开仓库。
+This file is ignored by Git. It should not be committed to the public repository.
 
-### 题库字段
+### Question Object Schema
 
-题库是一个 JSON 数组，每个题目对象建议包含以下字段：
+The question bank is a JSON array. Each question object should contain the following fields:
 
-| 字段 | 说明 |
+| Field | Meaning |
 | --- | --- |
-| `id` | 题目唯一 ID |
-| `subject` | 科目 |
-| `section` | 章节 |
-| `type` | 题型，支持 `single`、`multiple`、`judgement` |
-| `type_label` | 题型中文名 |
-| `difficulty` | 难度 |
-| `style_tag` | 出题方式标签 |
-| `question` | 题干 |
-| `option_a` 到 `option_e` | 选项内容，多选题建议只用 A-D，判断题只用 A/B |
-| `answer` | 答案，如 `A`、`BD` |
-| `answer_text` | 答案文字 |
-| `explanation` | 解析 |
-| `source_file` | 来源文件 |
-| `source_page` | 来源页码或位置 |
-| `source_excerpt` | 来源摘录 |
-| `knowledge_point` | 知识点 |
+| `id` | Stable unique question ID |
+| `subject` | Subject or course name |
+| `section` | Section or chapter |
+| `type` | `single`, `multiple`, or `judgement` |
+| `type_label` | Human-readable type label |
+| `difficulty` | Difficulty label |
+| `style_tag` | Question style/category |
+| `question` | Question stem |
+| `option_a` to `option_e` | Options. True/false usually uses A/B only; multiple-choice usually uses A-D. |
+| `answer` | Correct answer letters, such as `A` or `BD` |
+| `answer_text` | Human-readable answer text |
+| `explanation` | Detailed explanation |
+| `source_file` | Source file or reference name |
+| `source_page` | Source page/location |
+| `source_excerpt` | Source excerpt |
+| `knowledge_point` | Knowledge point |
 
-### 最小示例
+### Minimal Example
 
 ```json
 [
   {
     "id": "DEMO-S-001",
-    "subject": "示例科目",
-    "section": "基础功能",
+    "subject": "Demo Subject",
+    "section": "Basics",
     "type": "single",
-    "type_label": "单项选择题",
-    "difficulty": "中上",
-    "style_tag": "正向辨析",
-    "question": "在本地刷题工具中，最适合用于保存个人学习进度的数据文件是（ ）。",
-    "option_a": "本地 SQLite 运行时数据库",
-    "option_b": "前端构建产物目录",
-    "option_c": "浏览器缓存目录",
-    "option_d": "项目说明文档",
+    "type_label": "Single Choice",
+    "difficulty": "Medium",
+    "style_tag": "Concept Check",
+    "question": "Which file stores local learning progress in this app?",
+    "option_a": "The local SQLite runtime database",
+    "option_b": "The frontend build folder",
+    "option_c": "The browser cache",
+    "option_d": "The README file",
     "option_e": "",
     "answer": "A",
-    "answer_text": "A. 本地 SQLite 运行时数据库",
-    "explanation": "学习记录、错题、收藏等运行数据适合写入本地数据库。",
-    "source_file": "公开示例题库",
+    "answer_text": "A. The local SQLite runtime database",
+    "explanation": "Runtime learning records are stored in SQLite so they can be queried and backed up.",
+    "source_file": "Public demo bank",
     "source_page": "demo",
-    "source_excerpt": "示例题仅用于验证刷题流程。",
-    "knowledge_point": "本地数据存储"
+    "source_excerpt": "Demo content used only for local verification.",
+    "knowledge_point": "Local state"
   }
 ]
 ```
 
-## 项目结构
+## Project Structure
 
 ```text
 .
 ├── backend/
-│   ├── main.py                 # FastAPI API、认证、刷题、学习中心、管理平台逻辑
-│   ├── public_main.py          # 生产模式静态文件托管入口
-│   └── requirements.txt        # Python 依赖
+│   ├── main.py
+│   ├── public_main.py
+│   └── requirements.txt
 ├── data/
 │   └── question_bank.sample.json
 ├── docs/
-│   ├── assets/                 # README 截图
-│   └── local_operations.md     # 本地运维说明
+│   ├── assets/
+│   └── local_operations.md
 ├── frontend/
 │   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js
 │   └── src/
-│       ├── App.jsx             # 主界面和业务交互
+│       ├── App.jsx
 │       ├── adminQuestionForm.js
 │       ├── main.jsx
 │       ├── randomPracticeLogic.js
@@ -267,106 +301,101 @@ data/question_bank.json
 └── README.md
 ```
 
-## 常用命令
+## Common Commands
 
-### 前端开发服务器
+### Frontend Development Server
 
-适合只调试前端界面。后端仍需要另行启动。
+Use this when working on frontend UI. The backend still needs to run separately for API calls.
 
 ```powershell
 cd .\frontend
 npm run dev
 ```
 
-默认地址通常是：
+Typical URL:
 
 ```text
 http://127.0.0.1:5173/
 ```
 
-### 前端生产构建
+### Frontend Production Build
 
 ```powershell
 cd .\frontend
 npm run build
+cd ..
 ```
 
-构建产物会写入：
+Build output:
 
 ```text
 frontend/dist/
 ```
 
-该目录已被 `.gitignore` 排除。
+The build output is ignored by Git.
 
-### 后端 API 开发启动
+### Backend API Development Server
 
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-API 文档：
+API docs:
 
 ```text
 http://127.0.0.1:8000/docs
 ```
 
-### 本地生产模式启动
+## Local Production Run
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\start_local.ps1
 ```
 
-该脚本会：
+The script:
 
-1. 执行前端生产构建。
-2. 停止占用目标端口的旧进程。
-3. 使用 `backend.public_main:app` 启动 FastAPI。
-4. 将前端构建产物由后端统一托管。
+1. Builds the frontend.
+2. Stops the process already listening on the target port.
+3. Starts `backend.public_main:app`.
+4. Serves the built frontend through FastAPI.
 
-## 部署与运行
+To use a different port:
 
-当前公开版默认面向本地运行。推荐先在本机确认以下内容：
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start_local.ps1 -Port 8011
+```
 
-- `http://127.0.0.1:8001/` 可以打开首页。
-- 能使用 `demo / demo123456` 登录。
-- 随机刷题能开始并交卷。
-- 管理员能使用 `admin / admin123456` 登录管理平台。
-- `data/app_state.sqlite` 已自动生成。
+Then open:
 
-如需部署到服务器，建议：
+```text
+http://127.0.0.1:8011/
+```
 
-- 使用 HTTPS 反向代理。
-- 修改默认管理员密码。
-- 不要把私有题库放入 Git 仓库。
-- 定期备份 `data/app_state.sqlite`。
-- 根据服务器实际路径调整启动脚本。
+## Backup And Restore
 
-## 备份与恢复
-
-### 备份本地数据库
+### Backup
 
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\backup_database.py backup
 ```
 
-备份文件会写入：
+Backups are written to:
 
 ```text
 data/backups/
 ```
 
-### 恢复本地数据库
+### Restore
 
-恢复会覆盖当前本地数据库，必须显式加确认参数：
+Restore overwrites the current local runtime database and requires explicit confirmation:
 
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\backup_database.py restore .\data\backups\app_state_YYYYMMDD_HHMMSS.sqlite --confirm-overwrite
 ```
 
-## 开发验证
+## Development Checks
 
-推荐在提交前执行：
+Recommended before committing:
 
 ```powershell
 node .\scripts\check_random_selection_logic.mjs
@@ -379,25 +408,25 @@ npm run build
 cd ..
 ```
 
-如果要快速验证后端示例题库是否能加载：
+Quickly verify the sample question bank can be loaded:
 
 ```powershell
 .\.venv\Scripts\python.exe -c "from backend import main; print(len(main.QUESTIONS))"
 ```
 
-预期输出为示例题库数量，例如：
+Expected demo output:
 
 ```text
 12
 ```
 
-## 排错指南
+## Troubleshooting
 
-### 1. `frontend build not found; run npm run build`
+### `frontend build not found; run npm run build`
 
-说明还没有构建前端。
+The frontend has not been built yet.
 
-执行：
+Run:
 
 ```powershell
 cd .\frontend
@@ -405,96 +434,94 @@ npm run build
 cd ..
 ```
 
-然后重新启动后端。
+Then restart the backend.
 
-### 2. `Virtual environment python not found`
+### `Virtual environment python not found`
 
-说明还没有创建 `.venv`。
+The `.venv` directory does not exist.
 
-执行：
+Run:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.txt
 ```
 
-### 3. 端口 8001 被占用
+### Port `8001` Is Already In Use
 
-可以指定其他端口：
+Use another port:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\start_local.ps1 -Port 8011
 ```
 
-然后访问：
+### Login Fails
 
-```text
-http://127.0.0.1:8011/
-```
-
-### 4. 登录失败
-
-确认是否使用了默认账号：
+Try the default accounts:
 
 ```text
 admin / admin123456
 demo / demo123456
 ```
 
-如果已经修改过密码但忘记了，可以删除本地运行时数据库重新初始化：
+If you changed passwords and want to reset the local instance, remove the runtime database:
 
 ```powershell
 Remove-Item .\data\app_state.sqlite
 powershell -ExecutionPolicy Bypass -File .\scripts\start_local.ps1
 ```
 
-删除数据库会清空本地账号、学习记录、错题和收藏。
+This clears local users, sessions, answers, wrong questions, and favorites.
 
-### 5. 私有题库没有生效
+### Private Bank Does Not Load
 
-确认文件位置：
+Check the file path:
 
 ```text
 data/question_bank.json
 ```
 
-确认 JSON 是数组，并且每道题包含必要字段。修改题库文件后需要重启后端。
+The file must be a JSON array and each question should include the required fields described above. Restart the backend after changing the file.
 
-### 6. GitHub 上没有显示截图
+### Screenshots Do Not Render On GitHub
 
-确认截图文件已经提交：
+Verify screenshot files are tracked:
 
 ```powershell
 git ls-files docs/assets
 ```
 
-README 使用的是相对路径，例如：
+README image paths are relative paths such as:
 
 ```markdown
-![随机刷题](docs/assets/screenshot-random-practice.png)
+![Random practice](docs/assets/screenshot-random-practice.png)
 ```
 
-## 开源边界
+## Open-Source Boundary
 
-本仓库适合公开：
+The following are safe to publish:
 
-- 前端代码。
-- 后端代码。
-- 启动脚本。
-- 备份脚本。
-- README 截图。
-- 非考试内容的示例题库。
+- Frontend source code.
+- Backend source code.
+- Startup scripts.
+- Backup scripts.
+- README screenshots used for product demonstration.
+- The public demo question bank.
 
-不建议公开：
+The following should remain private:
 
 - `data/question_bank.json`
 - `data/question_bank.csv`
 - `data/*.xlsx`
 - `data/app_state.sqlite`
 - `data/backups/`
-- 含真实用户数据或真实题库内容的截图。
 
-相关忽略规则已经写入 `.gitignore`。如果你要重新生成题库或导入正式题库，请先确认 `git status --ignored` 中这些文件仍处于 ignored 状态。
+The `.gitignore` file is configured to keep private question banks and runtime data out of Git. Before pushing, run:
+
+```powershell
+git status --ignored
+git check-ignore -v data/question_bank.json data/question_bank.csv data/app_state.sqlite
+```
 
 ## License
 
