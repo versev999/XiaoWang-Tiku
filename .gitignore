@@ -1,0 +1,21 @@
+.venv/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+
+# Runtime state
+data/app_state.sqlite
+data/backups/
+data/*.log
+
+# Private question banks and generated exports
+data/question_bank.json
+data/question_bank.csv
+data/*.xlsx
+data/generation_summary.json
+data/manual_knowledge_units.json
+
+# Keep the public demo bank
+!data/question_bank.sample.json
